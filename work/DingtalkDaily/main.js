@@ -1,233 +1,210 @@
 "ui";
+
+// UI
 ui.layout(
-  <vertical h="*">
-    <text text="NCWU钉钉打卡" textSize="20sp" gravity="center_horizontal" />
-    <text text="注意：本脚本鲁棒性较低，请认真填写需要填写的内容！" textSize="16sp" gravity="center_horizontal" />
-    <text text="请先确保 钉钉“工作台” 左上角选择的企业为 华北水利水电大学！" textSize="16sp" gravity="center_horizontal" />
+  <vertical h="*" padding="8">
+    <text text="NCWU钉钉打卡" textSize="24sp" gravity="center_horizontal" />
+    <text text="By AkagiYui" textSize="22sp" gravity="center_horizontal" />
+    <text text="当前版本于2022年10月2日仍可使用" textSize="20sp" gravity="center_horizontal" />
+    <text text="该脚本免费开源，如果你是购买获得，请立即退款并报警！" textSize="18sp" gravity="center_horizontal" />
+    <text autoLink="all" text="开源地址：https://github.com/AkagiYui/NCWUDingtalkDaily" ellipsize="marquee"/>
     <horizontal>
-      <text text="学号：" textSize="16sp" />
-      <input id="username" inputType="number" singleLine="true" w="*" hint="请输入学号"/>
+      <text text="开源地址" textSize="18sp" />
+      <input inputType="textUri" singleLine="true" text="https://github.com/AkagiYui/NCWUDingtalkDaily" textSize="18sp"/>
+    </horizontal>
+    <text text="仔细阅读使用说明：" textSize="16sp"/>
+    <text text="1. 脚本鲁棒性较低，请认真填写所有内容！" />
+    <horizontal>
+      <text text="学号" textSize="16sp" />
+      <text text="*" textColor="red" textSize="16sp" />
+      <text text="：" textSize="16sp" />
+      <input id="studentIDTextBox" inputType="number" singleLine="true" w="*" hint="请输入学号"/>
     </horizontal>
     <horizontal>
-      <text text="姓名：" textSize="16sp" />
-      <input id="name" inputType="text" singleLine="true" w="*" hint="请输入姓名"/>
+      <text text="姓名" textSize="16sp" />
+      <text text="*" textColor="red" textSize="16sp" />
+      <text text="：" textSize="16sp" />
+      <input id="nameTextBox" inputType="text" singleLine="true" w="*" hint="请输入姓名"/>
     </horizontal>
     <horizontal>
       <text text="手机号：" textSize="16sp" />
-      <input id="phone" inputType="phone" singleLine="true" w="*" hint="请输入手机号"/>
+      <input id="phoneNumberTextBox" inputType="phone" singleLine="true" w="*" hint="留空将随机生成"/>
     </horizontal>
-    <text text="该脚本会在你指定名称的相册中选择第一张图片作为核酸检测记录图片！" textSize="16sp" gravity="center_horizontal" />
     <horizontal>
-      <text text="相册名：" textSize="16sp" />
-      <input id="album" inputType="text" singleLine="true" w="*" hint="请输入相册名"/>
+      <text text="2. 打开无障碍服务→"/>
+      <Switch id="autoServiceSwitch" text="无障碍服务" checked="{{auto.service != null}}" gravity="right" w="*"/>
     </horizontal>
-    <button id="save" text="保存" w="*" />
+    <text text="3. 确保钉钉语言为简体中文"/>
+    <text text="4. 创建一个相册，用于存放打卡图片，脚本会在你指定名称的相册中选择第一张图片作为核酸检测记录图片"/>
+    <horizontal>
+      <text text="相册名" textSize="16sp" />
+      <text text="*" textColor="red" textSize="16sp" />
+      <text text="：" textSize="16sp" />
+      <input id="albumNameTextBox" inputType="text" singleLine="true" w="*" hint="请输入相册名"/>
+    </horizontal>
+    <text text="5. 记得保存↓"/>
+    <button id="saveButton" text="保存" w="*"/>
     <frame h="*" w="*">
-    <button id="rrun" text="走起" w="*" layout_gravity="bottom" h="auto"/>
+      <button id="runButton" text="开始运行" layout_gravity="bottom" h="auto"/>
     </frame>
   </vertical>
 );
-let storage = storages.create("DingtalkDaily");
-ui.username.setText(storage.get("username", ""));
-ui.name.setText(storage.get("name", ""));
-ui.phone.setText(storage.get("phone", ""));
-ui.album.setText(storage.get("album", ""));
-ui.save.click(() => {
-  storage.put("username", ui.username.text());
-  storage.put("name", ui.name.text());
-  storage.put("phone", ui.phone.text());
-  storage.put("album", ui.album.text());
-})
 
-device.wakeUp(); // 唤醒设备
-ui.rrun.click(()=>(threads.start(() => {
-  // eslint-disable-next-line no-constant-condition
+// 配置读写器
+let s = storages.create("DingtalkDaily");
+let myStorage = {
+  getStudentID: () => s.get("studentID", ""),
+  setStudentID: (studentID) => s.put("studentID", studentID),
+  getName: () => s.get("name", ""),
+  setName: (name) => s.put("name", name),
+  getPhoneNumber: () => s.get("phoneNumber", ""),
+  setPhoneNumber: (phoneNumber) => s.put("phoneNumber", phoneNumber),
+  getAlbumName: () => s.get("albumName", ""),
+  setAlbumName: (albumName) => s.put("albumName", albumName),
+};
+
+// 无障碍服务开关
+ui.autoServiceSwitch.on("check", (checked) => {
+  if (checked && auto.service == null) {
+      app.startActivity({action: "android.settings.ACCESSIBILITY_SETTINGS"});
+  }
+  if (!checked && auto.service != null) {
+      auto.service.disableSelf();
+  }
+});
+// 按钮事件
+ui.saveButton.click(() => {
+  myStorage.setStudentID(ui.studentIDTextBox.text());
+  myStorage.setName(ui.nameTextBox.text());
+  myStorage.setPhoneNumber(ui.phoneNumberTextBox.text());
+  myStorage.setAlbumName(ui.albumNameTextBox.text());
+});
+ui.runButton.click(() => threads.start(mainScript));
+
+// 读取配置
+ui.studentIDTextBox.setText(myStorage.getStudentID());
+ui.nameTextBox.setText(myStorage.getName());
+ui.phoneNumberTextBox.setText(myStorage.getPhoneNumber());
+ui.albumNameTextBox.setText(myStorage.getAlbumName());
+
+
+function mainScript() {
+  // 显示控制台
+  let utils = require("./utils.js");
+  utils.resetConsole();
+  console.setTitle("NCWUDingtalkDaily");
+
+  // 读取配置
+  let studentID = myStorage.getStudentID();
+  let name = myStorage.getName();
+  let albumName = myStorage.getAlbumName();
+  if (!(studentID && name && albumName)) {
+    console.error("请填写所有内容并保存！");
+    return;
+  }
+  if (auto.service === null) {
+    console.error("请开启无障碍服务！");
+    return;
+  }
+  console.log("学号：" + studentID);
+  console.log("姓名：" + name);
+  let phoneNumber = myStorage.getPhoneNumber();
+  if (!phoneNumber) {
+    phoneNumber = utils.random(13000000000, 19999999999);
+    console.log("未填写手机号，随机生成：" + phoneNumber);
+    phoneNumber = phoneNumber.toString();
+  } else {
+    console.log("手机号：" + phoneNumber);
+  }
+  console.log("相册名：" + albumName);
+
+  console.log("开始运行");
+  device.wakeUp(); // 唤醒设备
   while (true) {
+    sleep(1000);
+
     // 打开钉钉
-    let cp = currentPackage();
-    if (cp !== "com.alibaba.android.rimet") {
-      console.verbose("当前不在钉钉", cp);
+    let t = currentPackage();
+    if (t !== "com.alibaba.android.rimet") {
+      console.log("场景", t);
       threads.start(() => {
-        console.verbose("启动钉钉");
+        console.log("尝试启动钉钉");
         if (!app.launchPackage("com.alibaba.android.rimet")) {
-          console.error("启动钉钉失败");
+          console.error("启动钉钉失败，请自行打开钉钉");
         }
       })
-      sleep(2000);
+      continue;
     }
 
-    // 点击 工作台，请确保工作台企业是 华北水利水电大学
-    if (!id("recycler_view").find().empty()) {
-      if (className("android.view.View").text("健康打卡").findOnce() === null) {
-        console.verbose("点击 工作台");
-        click('工作台');
-        sleep(1000);
+    // 切换到 工作台
+    t = text("工作台").findOnce();
+    if (t && !id("tv_org_name").findOnce()) {
+      console.log("场景", "找到工作台按钮并且不在工作台");
+      t = utils.findClickableParent(t);
+      if (t) {
+        t.click();
       } else {
-        console.verbose("已在工作台");
+        console.error("找不到可点击对象");
       }
+      continue;
+    }
+
+    // 检查 企业名称
+    t = id("tv_org_name").findOnce(); // 在工作台
+    if (t && id("tv_app_center").findOnce()) {
+      console.log("场景", "工作台");
+      if (t.text() !== "华北水利水电大学") {
+        console.log("当前企业", t.text());
+        console.log("切换", "企业列表");
+        t.click(); // 打开企业列表
+        continue;
+      }
+    }
+
+    // 选择企业
+    t = text("创建个人空间").findOnce();
+    if (t && id("ift_selected").findOnce()) {
+      console.log("场景", "企业列表");
+      let t1 = text("华北水利水电大学").findOnce();
+      if (t1) {
+        console.log("切换", "华北水利水电大学");
+        t1 = utils.findClickableParent(t1);
+        if (t1) {
+          t1.click();
+        } else {
+          console.error("找不到可点击对象");
+        }
+      }
+      continue;
     }
 
     // 点击 本科生每日健康打卡
-    let t = className("android.view.View").text("本科生每日健康打卡").findOnce();
-    if (t !== null) {
-      console.verbose("点击 本科生每日健康打卡");
-      t.parent().click();
-    }
-
-    // 问卷选择/填写页面
-    // eslint-disable-next-line no-undef
-    let ca = currentActivity();
-    if (ca === "com.alibaba.lightapp.runtime.activity.CommonWebViewActivitySwipe") {
-      // 打开今天的问卷
-      t = className("android.view.View").text("今天").findOnce();
-      if (t !== null) {
-        console.verbose("点击 今天");
+    t = text("本科生每日健康打卡").findOnce();
+    if (t && !text("完成情况").findOnce() && !text("提交").findOnce()) {
+      console.log("点击", "本科生每日健康打卡");
+      t = utils.findClickableParent(t);
+      if (t) {
         t.click();
+      } else {
+        console.error("找不到可点击对象");
       }
-
-      // 如果底下是 修改 说明已经打过卡了
-      t = className("android.view.View").text("修改").findOnce();
-      if (t !== null) {
-        console.info("已经打卡");
-        toastLog("已经打卡");
-        shell("am force-stop com.alibaba.android.rimet", false);
-        break;
-      }
-
-      // 文本框 
-      t = className("android.view.View").text("学号").findOnce();
-      if (t !== null) {
-        console.verbose("填充 学号");
-        t = t.parent().parent().findOne(className("android.widget.EditText"));
-        if (t !== null) {
-          t.setText(ui.username.text());
-        }
-      }
-
-      t = className("android.view.View").text("姓名").findOnce();
-      if (t !== null) {
-        console.verbose("填充 姓名");
-        t = t.parent().parent().findOne(className("android.widget.EditText"));
-        if (t !== null) {
-          t.setText(ui.name.text());
-        }
-      }
-
-      t = className("android.view.View").text("手机号码").findOnce();
-      if (t !== null) {
-        console.verbose("填充 手机号码");
-        t = t.parent().parent().findOne(className("android.widget.EditText"));
-        if (t !== null) {
-          t.setText(ui.phone.text());
-        }
-      }
-
-      // 单选框选是
-      t = className("android.widget.RadioButton").find();
-      if (!t.empty()) {
-        for (let tt of t) {
-          if (tt.text() === ' 是' && tt.checked() === false) {
-            console.verbose("点击 单选框");
-            tt.click();
-          }
-        }
-      }
-
-      // 打开图片选择器
-      let selectedImage = false;
-      t = className("android.widget.Image").find();
-      if (!t.empty()) {
-        for (let tt of t) {
-          if (tt.clickable()) {
-            let b = tt.bounds();
-            if (b.width() > 100 && b.height() > 100) {
-              console.verbose("已添加图片");
-              selectedImage = true;
-              break;
-            }
-          }
-        }
-      }
-      if (!selectedImage) {
-        t = className("android.view.View").text("请上传48小时核酸证明文件").findOnce();
-        if (t !== null && id("cb_send_origin").findOnce() === null) {
-          t = className("android.view.View").clickable(true).depth(23).findOnce();
-          if (t !== null) {
-            console.verbose("选择图片");
-            t.click();
-            sleep(1000);
-            continue;
-          }
-        }
-      }
-
-      // 获取位置
-      t = className("android.view.View").text("获取").findOnce();
-      if (t !== null) {
-        console.verbose("点击 获取");
+      continue;
+    }
+    if (t && text("今天").findOnce()) {
+      console.log("场景", "每日完成情况页面");
+      console.log("点击", "今天");
+      t = text("今天").findOnce();
+      t = utils.findClickableParent(t);
+      if (t) {
         t.click();
-        sleep(4000);
+      } else {
+        console.error("找不到可点击对象");
       }
+      continue;
     }
-
-    // eslint-disable-next-line no-undef
-    t = currentActivity();
-    if (t === "com.alibaba.laiwang.photokit.picker.ImageFolderDialog") {
-      console.verbose("相册选择界面");
-      t = id("lv_folder_list").findOnce();
-      if (t !== null) {
-        let found = false;
-        t.children().forEach(child => {
-          let target = child.findOne(id("tv_folder_name"));
-          if (target !== null) {
-            if (target.text().substr(0, ui.album.text().length + 1) === ui.album.text()+"(") {
-              console.verbose("选择相册");
-              child.click();
-              found = true;
-            }
-          }
-        });
-        if (!found) {
-          console.error("未找到相册，向下滑动");
-          let b = t.bounds();
-          // eslint-disable-next-line no-undef
-          swipe(b.centerX(), b.bottom - 200, b.centerX(), b.top + 10, 1000);
-        }
-      }
+    if (t && text("提交").findOnce()) {
+      console.log("场景", "问卷填写页面");
     }
-
-    // eslint-disable-next-line no-undef
-    t = currentActivity();
-    if (t === "com.alibaba.android.dingtalk.photoui.activitys.AlbumActivity") {
-      t = id("tv_image_folder").findOnce();
-      if (t !== null && t.text() !== ui.album.text()) {
-        console.verbose("切换相册");
-        t.click();
-      }
-
-      // 选择第一张图片
-      t = id("album_gv").findOnce();
-      if (t !== null) {
-        t.children().forEach(child => {
-          let target = child.findOne(id("album_item_media_cbx_icon"));
-          if (target !== null) {
-            if (target.desc() === '未选中') {
-              target.click();
-              sleep(100);
-              id("btn_send").findOne().click();
-            }
-          }
-        });
-      }
-    }
-
-    // t = className("android.widget.Button").text("提交").findOnce();
-    // if (t !== null) {
-    //   console.verbose("点击 提交");
-    //   t.click();
-    // }
-    // exit();
-    sleep(1000);
   }
-
-})));
+  console.show(true);
+}

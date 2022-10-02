@@ -1,28 +1,7 @@
 
 var common = {};
 common.index = 0;
-common.random = function (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-common.resetConsole = function (x, y, w, h) {
-    console.show(true);
-    x = x || 0;
-    y = y || 0;
-    w = w || device.width * 0.7;
-    h = h || device.height * 0.2;
-    sleep(1000);
-    console.setPosition(x, y);
-    sleep(1000);
-    ui.run(() => {
-        console.setSize(w, h);
-        console.setCanInput(false);
-        console.setTitle("", "#ff11ee00", 30);
-        console.setLogSize(8);
-    })
-}
-common.setConsoleTitle = function (title, color, size) {
-    console.setTitle(title, color, size);
-}
+
 common.getRadioIndex = function (radios) {
     for (let index = 0; index < radios.length; index++) {
         const element = radios[index];
