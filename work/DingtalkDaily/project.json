@@ -1,0 +1,10 @@
+{
+    "name": "DingtalkDaily",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.akagiyui.dingtalkdaily",
+    "versionName": "0.1.0",
+    "versionCode": 1
+}
