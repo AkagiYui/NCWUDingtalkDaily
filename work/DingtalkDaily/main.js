@@ -184,33 +184,20 @@ module.exports = () => {
         }
       }
 
-      // 填写学号
-      t = utils.findNearestEditableTextBoxInQuestionnaireByName("学号");
-      if (t) {
-        if (t.text() !== studentID) {
-          console.log("当前学号", t.text());
-          console.log("填写学号", studentID);
-          t.setText(studentID);
-        }
-      }
-
-      // 填写姓名
-      t = utils.findNearestEditableTextBoxInQuestionnaireByName("姓名");
-      if (t) {
-        if (t.text() !== name) {
-          console.log("当前姓名", t.text());
-          console.log("填写姓名", name);
-          t.setText(name);
-        }
-      }
-
-      // 填写手机号
-      t = utils.findNearestEditableTextBoxInQuestionnaireByName("手机号码");
-      if (t) {
-        if (t.text() !== phoneNumber) {
-          console.log("当前手机号", t.text());
-          console.log("填写手机号", phoneNumber);
-          t.setText(phoneNumber);
+      // 填写文本框
+      let textBoxList = [
+        ["学号", studentID],
+        ["姓名", name],
+        ["手机号码", phoneNumber],
+      ]
+      for (let tuple of textBoxList) {
+        t = utils.findNearestEditableTextBoxInQuestionnaireByName(tuple[0]);
+        if (t) {
+          if (t.text() !== tuple[1]) {
+            console.log("当前" + tuple[0], t.text());
+            console.log("填写" + tuple[0], tuple[1]);
+            t.setText(tuple[1]);
+          }
         }
       }
 

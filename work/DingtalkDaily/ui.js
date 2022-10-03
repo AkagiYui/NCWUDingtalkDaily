@@ -46,7 +46,8 @@ ui.layout(
     <button id="runButton" text="开始运行" layout_gravity="bottom" h="auto"/>
     <text text="一些提示：" />
     <text text="1. 运行一次即可保存设置，以后使用无需再次填写。" />
-    <text text="2. apk直装版有一个常驻通知，你可以把脚本的通知权限关闭。" />
+    <text text="2. 为减少权限申请，该脚本没有使用联网更新机制。" />
+    <text text="3. apk直装版有一个常驻通知，你可以把脚本的通知权限关闭。" />
     <text text="该脚本免费开源，如果你是购买获得，请立即退款并报警！" textSize="18sp" gravity="center_horizontal" />
     <text autoLink="all" text="开源地址：https://github.com/AkagiYui/NCWUDingtalkDaily" ellipsize="marquee"/>
     <horizontal>
