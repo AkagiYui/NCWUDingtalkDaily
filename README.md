@@ -9,3 +9,5 @@
 1. 该项目使用`pnpm`作为包管理器，需要先安装`pnpm`，然后使用`pnpm install`安装依赖。
 
 2. 使用`pnpm build`构建项目，构建后的文件在`dist`目录下。
+
+3. 使用`Autox.js`运行`ui.js`脚本即可。
