@@ -75,6 +75,14 @@ module.exports = () => {
       continue;
     }
 
+    // 退出问卷列表页面
+    if (className("android.view.View").text("创建").findOnce()
+        && className("android.view.View").text("填写").findOnce()
+        && className("android.view.View").text("统计").findOnce()) {
+      console.verbose("场景", "问卷列表页面");
+      back();
+    }
+
     // 检查 企业名称
     t = className("android.widget.TextView").id("tv_org_name").findOnce(); // 企业名称
     if (t && className("android.widget.TextView").id("tv_app_center").findOnce()) {
