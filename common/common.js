@@ -38,91 +38,6 @@ common.waitTime = function (seconds, txt) {
         i--;
     }
 }
-common.openApp = function (name) {
-    launchApp(name);
-}
-common.backHomeReloadApp = function (name) {
-    common.closeApp(name)
-    sleep(1000);
-    common.openApp(name);
-}
-common.swipeToRight = function () {
-    // eslint-disable-next-line no-undef
-    swipe(device.width * 0.8 + random(-20, 10), device.height * 0.5 + random(-20, 10),
-        device.width * 0.2 + random(-20, 10), device.height * 0.5 + random(-20, 10), 1);
-}
-common.swipeToLeft = function () {
-    // eslint-disable-next-line no-undef
-    swipe(device.width * 0.2 + random(-20, 10), device.height * 0.5 + random(-20, 10),
-        device.width * 0.8 + random(-20, 10), device.height * 0.5 + random(-20, 10), 1);
-}
-common.closeApp = function (name) {
-  //  launchApp(name);
-    var i = 0;
-    while (i < 5) {
-        back();
-        sleep(1000);
-        i++;
-    }
-    back();
-    sleep(1000);
-    back();
-}
-
-//短距离测试
-//sml_move(400, 1000, 800, 600, 1000);
-//此代码由飞云脚本圈整理提供（www.feiyunjs.com）
-function bezier_curves(cp, t) {
-    var cx = 3.0 * (cp[1].x - cp[0].x);
-    var bx = 3.0 * (cp[2].x - cp[1].x) - cx;
-    var ax = cp[3].x - cp[0].x - cx - bx;
-    var cy = 3.0 * (cp[1].y - cp[0].y);
-    var by = 3.0 * (cp[2].y - cp[1].y) - cy;
-    var ay = cp[3].y - cp[0].y - cy - by;
-
-    var tSquared = t * t;
-    var tCubed = tSquared * t;
-    var result = {
-        "x": 0,
-        "y": 0
-    };
-    result.x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
-    result.y = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y;
-    return result;
-}
-//仿真随机带曲线滑动  
-//qx, qy, zx, zy, time 代表起点x,起点y,终点x,终点y,过程耗时单位毫秒
-common.swipeRandom = function (qx, qy, zx, zy, time) {
-    var xxy = [time];
-    var point = [];
-    var dx0 = {
-        "x": qx,
-        "y": qy
-    };
-    var dx1 = {
-        "x": random(qx - 100, qx + 100),
-        "y": random(qy, qy + 50)
-    };
-    var dx2 = {
-        "x": random(zx - 100, zx + 100),
-        "y": random(zy, zy + 50),
-    };
-    var dx3 = {
-        "x": zx,
-        "y": zy
-    };
-    point.push(dx0);
-    point.push(dx1);
-    point.push(dx2);
-    point.push(dx3);
-    // log(point[3].x)
-    for (let i = 0; i < 1.2; i += 0.08) {
-        var xxyy = [parseInt(bezier_curves(point, i).x), parseInt(bezier_curves(point, i).y)]
-        xxy.push(xxyy);
-    }
-    //  log(xxy);
-    gesture.apply(null, xxy);
-};
 
 common.readlines = function (dir) {
     files.ensureDir(dir);
@@ -132,9 +47,7 @@ common.readlines = function (dir) {
     var m = files.open(dir, "r").readlines();
     return m;
 }
-common.deviceHeight = function () {
-    return device.height - device.getVirtualBarHeigh();
-}
+
 common.clickDesc = function (desc) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -284,9 +197,9 @@ common.xs_控件坐标点击 = function (UiObject, M) {
                 return UiObject.click();
             } else {
                 return arguments.callee(UiObject.parent());
-            };
-        };
-    };
+            }
+        }
+    }
 };
 common.xs_控件点击 = function (nr1, nr2) {
     if (nr1 == "text") {
@@ -304,6 +217,7 @@ common.xs_控件点击 = function (nr1, nr2) {
 };
 common.xs_控件匹配点击 = function (nr1) {
     if (nr1) {
+        // eslint-disable-next-line no-undef
         var rect = textContains(nr1).findOne(1000)
         if (rect != null) {
             rect = rect.text();
@@ -314,12 +228,12 @@ common.xs_控件匹配点击 = function (nr1) {
     }
 };
 common.xs_删除写入文本 = function (nr1, nr2) {
-    file = open(nr1, "w");
+    let file = open(nr1, "w");
     file.write(nr2);
     file.close(); //关闭文件
 };
 common.xs_叠加写入文本 = function (nr1, nr2) {
-    file = open(nr1, "a");
+    let file = open(nr1, "a");
     file.writeline(nr2);
     file.close(); //关闭文件
 };
@@ -327,7 +241,7 @@ common.xs_读取txt第一行 = function (nr1, nr2) {  //nr1是路径,,nr2是编�
     var text = open(nr1, "r", nr2);
     var t = text.readlines();
     text.close();
-    for (a in t) {
+    for (let a in t) {
         if (a == 0) {
             //  log("txt第一行:" + t[i])
             return t[a]
@@ -353,7 +267,7 @@ common.xs_删除txt第一行 = function (nr1) {
     files.remove(nr1)
     files.createWithDirs(nr1)
     var Text = open(nr1, "w", "utf-8");
-    for (a in t) {
+    for (let a in t) {
         if (a != 0) {
             Text.write(t[a] + "\r\n")
         }
@@ -394,6 +308,7 @@ common.xs_控件是否存在 = function (nr1, nr2) {
 };
 common.xs_控件匹配是否存在 = function (nr1, nr2) {
     if (nr1 == "text") {
+        // eslint-disable-next-line no-undef
         if (textContains(nr2).exists()) {
             return true;
         } else {
@@ -401,6 +316,7 @@ common.xs_控件匹配是否存在 = function (nr1, nr2) {
         }
     }
     if (nr1 == "desc") {
+        // eslint-disable-next-line no-undef
         if (descContains(nr2).exists()) {
             return true;
         } else {
@@ -409,8 +325,10 @@ common.xs_控件匹配是否存在 = function (nr1, nr2) {
     }
 };
 common.xs_全屏正则匹配是否存在 = function (reg) {
+        // eslint-disable-next-line no-undef
         if (descMatches(reg).boundsInside(0,0,device.width,device.height).exists()) {
-             console.log("文本-->",reg, descMatches(reg).findOne().desc());
+            // eslint-disable-next-line no-undef
+            console.log("文本-->",reg, descMatches(reg).findOne().desc());
             return true;
         }
         if (textMatches(reg).boundsInside(0,0,device.width,device.height).exists()) {
@@ -457,7 +375,7 @@ common.foreachClick = function (node) {
         return node;
     } else {
         if (!node.parent()) return "";
-        return foreachClick(node.parent());
+        return common.foreachClick(node.parent());
     }
 };
 /**
@@ -483,7 +401,7 @@ common.saveInfo =function (userInfo){
       var r = http.postJson(qurl, userInfo);
       console.log(r.body.json());
     } catch (error) {
-      console.log(error);      
+      console.log(error);
     }
 }
 module.exports = common

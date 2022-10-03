@@ -1,6 +1,6 @@
 {
     "name": "DingtalkDaily",
-    "main": "main.js",
+    "main": "ui.js",
     "ignore": [
         "build"
     ],
