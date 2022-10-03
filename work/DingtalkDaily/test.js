@@ -1,3 +1,3 @@
 let t;
-t = !className("android.view.View").text("地点微调").findOnce();
+t = id("tv_folder_name").textMatches("dddk"+"\\(\\d+\\)").findOnce();
 console.log(t);

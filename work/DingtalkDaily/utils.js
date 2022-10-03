@@ -1,3 +1,25 @@
+function bezier_curves(cp, t) {
+  //短距离测试
+  //sml_move(400, 1000, 800, 600, 1000);
+  //此代码由飞云脚本圈整理提供（www.feiyunjs.com）
+  let cx = 3.0 * (cp[1].x - cp[0].x);
+  let bx = 3.0 * (cp[2].x - cp[1].x) - cx;
+  let ax = cp[3].x - cp[0].x - cx - bx;
+  let cy = 3.0 * (cp[1].y - cp[0].y);
+  let by = 3.0 * (cp[2].y - cp[1].y) - cy;
+  let ay = cp[3].y - cp[0].y - cy - by;
+
+  let tSquared = t * t;
+  let tCubed = tSquared * t;
+  let result = {
+      "x": 0,
+      "y": 0
+  };
+  result.x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
+  result.y = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y;
+  return result;
+}
+
 module.exports = {
   random: (min, max) => Math.floor(Math.random() * (max - min + 1) + min),
   resetConsole: (x, y, w, h) => {
@@ -69,6 +91,7 @@ module.exports = {
     }
     return false;
   },
+  
   swipeRandom: (qx, qy, zx, zy, time) => {
     //仿真随机带曲线滑动  
     //qx, qy, zx, zy, time 代表起点x,起点y,终点x,终点y,过程耗时单位毫秒
@@ -96,32 +119,11 @@ module.exports = {
     point.push(dx3);
     // log(point[3].x)
     for (let i = 0; i < 1.2; i += 0.08) {
-        let xxyy = [parseInt(this.bezier_curves(point, i).x), parseInt(this.bezier_curves(point, i).y)]
+        let xxyy = [parseInt(bezier_curves(point, i).x), parseInt(bezier_curves(point, i).y)]
         xxy.push(xxyy);
     }
     //  log(xxy);
     gesture.apply(null, xxy);
-  },
-  bezier_curves: (cp, t) => {
-    //短距离测试
-    //sml_move(400, 1000, 800, 600, 1000);
-    //此代码由飞云脚本圈整理提供（www.feiyunjs.com）
-    let cx = 3.0 * (cp[1].x - cp[0].x);
-    let bx = 3.0 * (cp[2].x - cp[1].x) - cx;
-    let ax = cp[3].x - cp[0].x - cx - bx;
-    let cy = 3.0 * (cp[1].y - cp[0].y);
-    let by = 3.0 * (cp[2].y - cp[1].y) - cy;
-    let ay = cp[3].y - cp[0].y - cy - by;
-
-    let tSquared = t * t;
-    let tCubed = tSquared * t;
-    let result = {
-        "x": 0,
-        "y": 0
-    };
-    result.x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
-    result.y = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y;
-    return result;
   },
   swipeToRight: () => {
     // eslint-disable-next-line no-undef
