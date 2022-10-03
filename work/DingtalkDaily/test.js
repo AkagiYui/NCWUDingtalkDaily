@@ -1,3 +1,3 @@
 let t;
-t = id("tv_folder_name").textMatches("dddk"+"\\(\\d+\\)").findOnce();
+t = floaty.checkPermission()
 console.log(t);

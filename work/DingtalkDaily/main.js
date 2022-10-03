@@ -270,7 +270,7 @@ module.exports = () => {
       // 日期是否正确
       t = className("android.view.View").textMatches("日期：.*\\d\\d月\\d\\d日.*").findOnce();
       if (t) {
-        console.log("找到", t.text());
+        console.verbose("找到", t.text());
         let date = t.text().split("：")[1];
         date = date.split(" ")[0];
         let realDate = new Date();
@@ -345,4 +345,6 @@ module.exports = () => {
   }
   console.show(true);
   running = false;
+  ui.finish();
+  exit();
 }
