@@ -22,15 +22,17 @@ module.exports=(()=>{
         
         importPackage(com.stardust.autojs.execution)
         let listener=
+        // eslint-disable-next-line no-undef
         ScriptExecutionListener({
-           onStart: 
-             function(execution) {
+            onStart: 
+            function(execution) {
                 let topScope = execution.getEngine().getRuntime().getTopLevelScope()
+                // eslint-disable-next-line no-undef
                 let ScriptableObject = org.mozilla.javascript.ScriptableObject
                 for (let key in args) {
-                     ScriptableObject.putProperty(topScope, key, args[key])
+                    ScriptableObject.putProperty(topScope, key, args[key])
                 }
-             }
+            }
         })
         if(!isPro()){
             //普通aj
@@ -39,6 +41,7 @@ module.exports=(()=>{
             let service=field.get(runtime.engines)
             field.setAccessible(false)
             service.execute(scriptSource,listener,fillConfig(config))
+        // eslint-disable-next-line no-undef
         }else return runtime.engines.execute(null,ScriptExecutionTask(scriptSource,listener,fillConfig(config)));  
     }
     var fillConfig = function(c) {
@@ -52,9 +55,10 @@ module.exports=(()=>{
         config.interval = c.interval || 0;
         config.loopTimes = (c.loopTimes === undefined) ? 1 : c.loopTimes;
         if (c.arguments) {
-            var arguments = c.arguments;
-            for (var key in arguments) {
-                if (arguments.hasOwnProperty(key)) {
+            var _arguments = c.arguments;
+            for (var key in _arguments) {
+                // eslint-disable-next-line no-prototype-builtins
+                if (_arguments.hasOwnProperty(key)) {
                     config.setArgument(key, arguments[key]);
                 }
             }
