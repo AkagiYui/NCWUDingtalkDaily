@@ -43,6 +43,9 @@ module.exports = () => {
 
   console.log("开始运行");
   device.wakeUp(); // 唤醒设备
+
+  let tryLaunchTimes = 0;
+
   // eslint-disable-next-line no-constant-condition
   while (true) {
     sleep(1000);
@@ -53,7 +56,15 @@ module.exports = () => {
     if (t !== "com.alibaba.android.rimet") {
       console.log("场景", t);
       threads.start(() => {
-        console.log("尝试启动钉钉");
+        if (tryLaunchTimes >= 5) {
+          console.warn("多次启动钉钉失败", "回到桌面");
+          // eslint-disable-next-line no-undef
+          home();
+          tryLaunchTimes = 0;
+        } else {
+          console.log("尝试启动钉钉");
+          tryLaunchTimes++;
+        }
         if (!app.launchPackage("com.alibaba.android.rimet")) {
           console.error("启动钉钉失败，请自行打开钉钉");
         }

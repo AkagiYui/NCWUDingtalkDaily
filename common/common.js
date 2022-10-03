@@ -74,9 +74,9 @@ common.timestampToHMS = function (timestamp) {
 }
 common.textToList = function (str) {
     var snsArr = str.split('\n');
-   snsArr =  snsArr.filter(function (s) {
-      return s && s.trim();
-   });
+    snsArr =  snsArr.filter(function (s) {
+        return s && s.trim();
+    });
     return snsArr;
 }
 var storageKey = "cslcommon";
