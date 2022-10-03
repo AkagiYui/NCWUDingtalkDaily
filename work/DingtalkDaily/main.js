@@ -238,9 +238,8 @@ module.exports = () => {
           let addedImages = t.find(className("android.widget.Image").clickable(true));
           console.log("已添加图片数量", addedImages.length);
           for (let t1 of addedImages) {
-            console.log("已添加图片", t1.bounds());
             let b = t1.bounds();
-            if (b.width() > 100 && b.height() > 100) {
+            if (b.width() > 100) {
               imageSelected = true;
               break;
             }
