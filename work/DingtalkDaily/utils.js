@@ -14,7 +14,7 @@ module.exports = {
         console.setLogSize(8);
     })
   },
-  findClickableParent: (child) => {
+  findClickableReverse: (child) => {
     if (child.clickable()) {
       return child;
     }
@@ -27,7 +27,7 @@ module.exports = {
     }
     return null;
   },
-  findNearestEditalbeTextBoxInQuestionnaireByName: (questionName) => {
+  findNearestEditableTextBoxInQuestionnaireByName: (questionName) => {
     let oriUIObject = className("android.view.View").text(questionName).findOnce();
     if (!oriUIObject) {
       return null;
@@ -51,24 +51,42 @@ module.exports = {
     }
     return str;
   },
+  clickRadioByText: (questionName, answer) => {
+    let oriUIObject = className("android.view.View").text(questionName).findOnce();
+    if (!oriUIObject) {
+      return null;
+    }
+    let parent = oriUIObject.parent();
+    while (parent !== null) {
+      let t = parent.findOne(className("android.widget.RadioButton")
+        .enabled().clickable().text(answer)
+      );
+      if (t && t.checked() === false) {
+        t.click();
+        return true;
+      }
+      parent = parent.parent();
+    }
+    return false;
+  },
   swipeRandom: (qx, qy, zx, zy, time) => {
     //仿真随机带曲线滑动  
     //qx, qy, zx, zy, time 代表起点x,起点y,终点x,终点y,过程耗时单位毫秒
-    var xxy = [time];
-    var point = [];
-    var dx0 = {
+    let xxy = [time];
+    let point = [];
+    let dx0 = {
         "x": qx,
         "y": qy
     };
-    var dx1 = {
+    let dx1 = {
         "x": random(qx - 100, qx + 100),
         "y": random(qy, qy + 50)
     };
-    var dx2 = {
+    let dx2 = {
         "x": random(zx - 100, zx + 100),
         "y": random(zy, zy + 50),
     };
-    var dx3 = {
+    let dx3 = {
         "x": zx,
         "y": zy
     };
@@ -78,7 +96,7 @@ module.exports = {
     point.push(dx3);
     // log(point[3].x)
     for (let i = 0; i < 1.2; i += 0.08) {
-        var xxyy = [parseInt(this.bezier_curves(point, i).x), parseInt(this.bezier_curves(point, i).y)]
+        let xxyy = [parseInt(this.bezier_curves(point, i).x), parseInt(this.bezier_curves(point, i).y)]
         xxy.push(xxyy);
     }
     //  log(xxy);
@@ -88,16 +106,16 @@ module.exports = {
     //短距离测试
     //sml_move(400, 1000, 800, 600, 1000);
     //此代码由飞云脚本圈整理提供（www.feiyunjs.com）
-    var cx = 3.0 * (cp[1].x - cp[0].x);
-    var bx = 3.0 * (cp[2].x - cp[1].x) - cx;
-    var ax = cp[3].x - cp[0].x - cx - bx;
-    var cy = 3.0 * (cp[1].y - cp[0].y);
-    var by = 3.0 * (cp[2].y - cp[1].y) - cy;
-    var ay = cp[3].y - cp[0].y - cy - by;
+    let cx = 3.0 * (cp[1].x - cp[0].x);
+    let bx = 3.0 * (cp[2].x - cp[1].x) - cx;
+    let ax = cp[3].x - cp[0].x - cx - bx;
+    let cy = 3.0 * (cp[1].y - cp[0].y);
+    let by = 3.0 * (cp[2].y - cp[1].y) - cy;
+    let ay = cp[3].y - cp[0].y - cy - by;
 
-    var tSquared = t * t;
-    var tCubed = tSquared * t;
-    var result = {
+    let tSquared = t * t;
+    let tCubed = tSquared * t;
+    let result = {
         "x": 0,
         "y": 0
     };
@@ -116,5 +134,5 @@ module.exports = {
         device.width * 0.8 + random(-20, 10), device.height * 0.5 + random(-20, 10), 1);
   },
   deviceHeight: () => device.height - device.getVirtualBarHeigh(),
-  
+
 }

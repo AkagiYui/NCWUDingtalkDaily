@@ -1,4 +1,3 @@
-
 var common = {};
 common.index = 0;
 

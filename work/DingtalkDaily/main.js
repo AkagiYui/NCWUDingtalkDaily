@@ -5,6 +5,7 @@ module.exports = () => {
   // 显示控制台
   let utils = require("./utils.js");
   utils.resetConsole();
+  console.show(true);
   console.setTitle("NCWUDingtalkDaily");
   
   // 读取配置
@@ -56,7 +57,7 @@ module.exports = () => {
     t = className("android.widget.TextView").id("home_bottom_tab_text").text("工作台").findOnce();
     if (t && !id("tv_org_name").findOnce()) {
       console.log("场景", "找到工作台按钮并且不在工作台");
-      t = utils.findClickableParent(t);
+      t = utils.findClickableReverse(t);
       if (t) {
         console.log("点击", "工作台");
         t.click();
@@ -81,7 +82,7 @@ module.exports = () => {
       t = className("android.view.View").text(QUESTIONNAIRE_NAME).findOnce();
       if (t) {
         console.log("点击", "本科生每日健康打卡");
-        t = utils.findClickableParent(t);
+        t = utils.findClickableReverse(t);
         if (t) {
           t.click();
         } else {
@@ -98,7 +99,7 @@ module.exports = () => {
       let t1 = text(ORGANIZATION_NAME).findOnce();
       if (t1) {
         console.log("切换", ORGANIZATION_NAME);
-        t1 = utils.findClickableParent(t1);
+        t1 = utils.findClickableReverse(t1);
         if (t1) {
           t1.click();
         } else {
@@ -114,7 +115,7 @@ module.exports = () => {
       console.log("场景", "每日完成情况页面");
       console.log("点击", "今天");
       t = className("android.view.View").text("今天").findOnce();
-      t = utils.findClickableParent(t);
+      t = utils.findClickableReverse(t);
       if (t) {
         t.click();
       } else {
@@ -144,35 +145,100 @@ module.exports = () => {
       }
 
       // 填写学号
-      t = utils.findNearestEditalbeTextBoxInQuestionnaireByName("学号");
+      t = utils.findNearestEditableTextBoxInQuestionnaireByName("学号");
       if (t) {
-        console.log("当前学号", t.text());
         if (t.text() !== studentID) {
+          console.log("当前学号", t.text());
           console.log("填写学号", studentID);
           t.setText(studentID);
         }
       }
 
       // 填写姓名
-      t = utils.findNearestEditalbeTextBoxInQuestionnaireByName("姓名");
+      t = utils.findNearestEditableTextBoxInQuestionnaireByName("姓名");
       if (t) {
-        console.log("当前姓名", t.text());
         if (t.text() !== name) {
+          console.log("当前姓名", t.text());
           console.log("填写姓名", name);
           t.setText(name);
         }
       }
 
       // 填写手机号
-      t = utils.findNearestEditalbeTextBoxInQuestionnaireByName("手机号码");
+      t = utils.findNearestEditableTextBoxInQuestionnaireByName("手机号码");
       if (t) {
-        console.log("当前手机号", t.text());
         if (t.text() !== phoneNumber) {
+          console.log("当前手机号", t.text());
           console.log("填写手机号", phoneNumber);
           t.setText(phoneNumber);
         }
       }
 
+      // 单选题
+      let radioQuestions = [
+        ["目前是否在校", " 是"],
+        ["过去48小时是否进行了核酸检测", " 是"],
+      ]
+      for (let q of radioQuestions) {
+        t = utils.clickRadioByText(q[0], q[1]);
+        if (t) {
+          console.log("选择", q[0], q[1]);
+        }
+      }
+
+      // 添加图片
+      t = className("android.view.View").text("请上传48小时核酸证明文件").findOnce(); // 包含Image控件的父控件
+      // if (t) {
+      //   // 找到该问题的控件
+      //   let pictureSelectButton = null; // Image控件
+      //   while (t) {
+      //     t1 = t.find(className("android.widget.Image").depth(26).clickable(false));
+      //     let found = false;
+      //     for (let t2 of t1) {
+      //       let b = t2.bounds();
+      //       if (b.width() > 50 && b.width() < 100) {
+      //         t1 = t2;
+      //         console.verbose("找到Image控件", t1);
+      //         console.verbose("t", t);
+      //         found = true;
+      //         break;
+      //       }
+      //     }
+      //     if (found) {
+      //       break;
+      //     }
+      //     t = t.parent();
+      //   }
+      //   if (t1) {
+      //     // 找到添加图片的按钮
+      //     console.verbose("发现", "添加图片按钮");
+      //     console.verbose(t);
+      //     // 判断是否已添加图片
+      //     let imageSelected = false;
+      //     let t2 = t.find(className("android.widget.Image").depth(26).clickable(true));
+      //     if (!t2.empty()) {
+      //       for (let t3 of t2) {
+      //         let b = t3.bounds();
+      //         if (b.width() > 100 && b.height() > 100) {
+      //           imageSelected = true;
+      //           break;
+      //         }
+      //       }
+      //     }
+
+      //     if (imageSelected) {
+      //       console.verbose("已添加图片");
+      //     }
+      //   }
+      // }
+
+      // 获取地址
+      t = className("android.view.View").text("获取").findOnce();
+      if (t && !className("android.view.View").text("地点微调").findOnce()) {
+        console.verbose("点击", "获取");
+        t.click();
+        continue;
+      }
     }
     // 问卷填写完成页面
     if (t && className("android.view.View").text("修改").findOnce()) {
