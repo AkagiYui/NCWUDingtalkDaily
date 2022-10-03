@@ -342,6 +342,14 @@ module.exports = () => {
       console.log("已完成打卡");
       break;
     }
+
+    // 点击 提交 按钮
+    t = className("android.widget.Button").text("提交").findOnce();
+    if (t) {
+      console.verbose("点击", "提交");
+      t.click();
+      continue;
+    }
   }
   console.show(true);
   running = false;
