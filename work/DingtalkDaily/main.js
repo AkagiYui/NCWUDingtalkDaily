@@ -71,6 +71,7 @@ module.exports = () => {
       })
       continue;
     }
+    tryLaunchTimes = 0;
 
     // 切换到 工作台
     t = className("android.widget.TextView").id("home_bottom_tab_text").text("工作台").findOnce();
@@ -214,7 +215,8 @@ module.exports = () => {
       }
 
       // 添加图片
-      t = className("android.view.View").text("请上传48小时核酸证明文件").findOnce(); // 包含Image控件的父控件
+      let n = "请上传最近一次核酸检测结果证明截图或采样电子凭证截图";
+      t = className("android.view.View").text(n).findOnce(); // 包含Image控件的父控件
       if (t) {
         // 找到该问题的控件
         let pictureSelectButton = null; // Image控件
@@ -357,6 +359,10 @@ module.exports = () => {
     }
   }
   console.show(true);
+  if (myStorage.getGoHome()) {
+    // eslint-disable-next-line no-undef
+    home();
+  }
   running = false;
   ui.finish();
   exit();

@@ -9,4 +9,6 @@ module.exports = {
   setPhoneNumber: (phoneNumber) => s.put("phoneNumber", phoneNumber),
   getAlbumName: () => s.get("albumName", ""),
   setAlbumName: (albumName) => s.put("albumName", albumName),
+  getGoHome: () => s.get("goHome", false),
+  setGoHome: (goHome) => s.put("goHome", goHome),
 };
