@@ -5,7 +5,7 @@
         "build"
     ],
     "packageName": "com.akagiyui.dingtalkdaily",
-    "versionName": "0.1.5",
-    "versionCode": 2,
+    "versionName": "0.1.6",
+    "versionCode": 3,
     "icon": "res/logo.png"
 }
