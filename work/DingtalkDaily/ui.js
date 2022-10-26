@@ -2,7 +2,7 @@
 
 // UI
 ui.layout(
-  <vertical h="auto" padding="8">
+  <linear orientation="vertical">
     <text text="NCWU钉钉打卡" textSize="24sp" gravity="center_horizontal" />
     <text text="By AkagiYui" textSize="22sp" gravity="center_horizontal" />
     <text text="当前版本于2022年10月25日可使用" textSize="18sp" gravity="center_horizontal" />
@@ -59,7 +59,7 @@ ui.layout(
       <text text="开源地址" textSize="18sp" />
       <input inputType="textUri" singleLine="true" text="https://github.com/AkagiYui/NCWUDingtalkDaily" textSize="18sp"/>
     </horizontal>
-  </vertical>
+  </linear>
 );
 ui.floatySwitch.checked = floaty.checkPermission();
 
@@ -129,7 +129,7 @@ ui.nameTextBox.setText(myStorage.getName());
 ui.phoneNumberTextBox.setText(myStorage.getPhoneNumber());
 ui.albumNameTextBox.setText(myStorage.getAlbumName());
 ui.goHomeSwitch.checked = myStorage.getGoHome();
-if (files.isFile("/sdcard/dd")) {
+if (app.versionCode < 100 && files.isFile("/sdcard/dd")) {
   console.log("自动运行");
   ui.runButton.click();
 }
