@@ -1,3 +1,7 @@
 let t;
 t = floaty.checkPermission()
-console.log(t);
+
+t = text("<24小时").findOnce();
+
+
+console.log(t, new Date().getTime());

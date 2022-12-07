@@ -11,4 +11,6 @@ module.exports = {
   setAlbumName: (albumName) => s.put("albumName", albumName),
   getGoHome: () => s.get("goHome", false),
   setGoHome: (goHome) => s.put("goHome", goHome),
+  getAutoScreenshot: () => s.get("autoScreenshot", false),
+  setAutoScreenshot: (autoScreenshot) => s.put("autoScreenshot", autoScreenshot),
 };

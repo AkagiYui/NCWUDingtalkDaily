@@ -6,9 +6,6 @@ module.exports = () => {
   }
   running = true;
 
-  let QUESTIONNAIRE_NAME = "本科生每日健康打卡"; // 问卷名称
-  let ORGANIZATION_NAME = "华北水利水电大学"; // 组织名称
-
   // 显示控制台
   let utils = require("./utils.js");
   utils.resetConsole();
@@ -44,6 +41,19 @@ module.exports = () => {
   console.log("开始运行");
   device.wakeUp(); // 唤醒设备
 
+  // 问卷设置
+  let QUESTIONNAIRE_NAME = "本科生每日健康打卡"; // 问卷名称
+  let ORGANIZATION_NAME = "华北水利水电大学"; // 组织名称
+  let textBoxList = [
+    ["学号", studentID],
+    ["姓名", name],
+    ["手机号码", phoneNumber],
+  ]; // 文本框填写内容
+  let radioQuestions = [
+    ["目前是否在校", " 否"],
+    ["过去7天是否健康", " 健康"],
+  ]; // 单选题选择内容
+
   let tryLaunchTimes = 0;
 
   // eslint-disable-next-line no-constant-condition
@@ -72,6 +82,17 @@ module.exports = () => {
       continue;
     }
     tryLaunchTimes = 0;
+
+    // 跳过更新提示
+    // eslint-disable-next-line no-undef
+    if ("android.support.v7.app.AlertDialog" === currentActivity()) {
+      t = text("暂不更新").findOnce();
+      if (t) {
+        console.log("点击", t.text());
+        t.click();
+        continue;
+      }
+    }
 
     // 切换到 工作台
     t = className("android.widget.TextView").id("home_bottom_tab_text").text("工作台").findOnce();
@@ -186,11 +207,6 @@ module.exports = () => {
       }
 
       // 填写文本框
-      let textBoxList = [
-        ["学号", studentID],
-        ["姓名", name],
-        ["手机号码", phoneNumber],
-      ]
       for (let tuple of textBoxList) {
         t = utils.findNearestEditableTextBoxInQuestionnaireByName(tuple[0]);
         if (t) {
@@ -203,10 +219,6 @@ module.exports = () => {
       }
 
       // 单选题
-      let radioQuestions = [
-        ["目前是否在校", " 是"],
-        ["过去48小时是否进行了核酸检测", " 是"],
-      ]
       for (let q of radioQuestions) {
         t = utils.clickRadioByText(q[0], q[1]);
         if (t) {

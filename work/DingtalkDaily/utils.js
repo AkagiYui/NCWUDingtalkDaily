@@ -20,6 +20,32 @@ function bezier_curves(cp, t) {
   return result;
 }
 
+function findClickableReverse(child) {
+  if (child.clickable()) {
+    return child;
+  }
+  let parent = child.parent();
+  while (parent !== null) {
+    if (parent.clickable()) {
+      return parent;
+    }
+    parent = parent.parent();
+  }
+  return null;
+}
+
+function tryClick(widget, comment) {
+  let t = findClickableReverse(widget);
+  if (t) {
+    console.log("点击", comment);
+    t.click();
+    return true;
+  } else {
+    console.error("未发现", "可点击对象");
+    return false;
+  }
+}
+
 module.exports = {
   random: (min, max) => Math.floor(Math.random() * (max - min + 1) + min),
   resetConsole: (x, y, w, h) => {
@@ -36,19 +62,7 @@ module.exports = {
         console.setLogSize(8);
     })
   },
-  findClickableReverse: (child) => {
-    if (child.clickable()) {
-      return child;
-    }
-    let parent = child.parent();
-    while (parent !== null) {
-      if (parent.clickable()) {
-        return parent;
-      }
-      parent = parent.parent();
-    }
-    return null;
-  },
+  findClickableReverse: findClickableReverse,
   findNearestEditableTextBoxInQuestionnaireByName: (questionName) => {
     let oriUIObject = className("android.view.View").text(questionName).findOnce();
     if (!oriUIObject) {
@@ -74,7 +88,7 @@ module.exports = {
     return str;
   },
   clickRadioByText: (questionName, answer) => {
-    let oriUIObject = className("android.view.View").text(questionName).findOnce();
+    let oriUIObject = className("android.view.View").textStartsWith(questionName).findOnce();
     if (!oriUIObject) {
       return null;
     }
@@ -91,7 +105,6 @@ module.exports = {
     }
     return false;
   },
-  
   swipeRandom: (qx, qy, zx, zy, time) => {
     //仿真随机带曲线滑动  
     //qx, qy, zx, zy, time 代表起点x,起点y,终点x,终点y,过程耗时单位毫秒
@@ -136,5 +149,13 @@ module.exports = {
         device.width * 0.8 + random(-20, 10), device.height * 0.5 + random(-20, 10), 1);
   },
   deviceHeight: () => device.height - device.getVirtualBarHeigh(),
-
+  tryClick: tryClick,
+  clickIfExist: (condition) => {
+    let t = condition.findOnce();
+    if (t) {
+      console.log("场景", `找到 ${t.text()}`);
+      return tryClick(t, t.text());
+    }
+    return false;
+  }
 }
